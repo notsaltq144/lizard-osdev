@@ -1,0 +1,85 @@
+	.file	"detailed-boot.c"
+	.intel_syntax noprefix
+	.text
+	.globl	main
+	.type	main, @function
+main:
+.LFB0:
+	.cfi_startproc
+	endbr64
+	push	rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	mov	rbp, rsp
+	.cfi_def_cfa_register 6
+	sub	rsp, 16
+	mov	rax, QWORD PTR fs:40
+	mov	QWORD PTR -8[rbp], rax
+	xor	eax, eax
+	mov	DWORD PTR -12[rbp], 0
+	lea	rax, -12[rbp]
+	mov	rdi, rax
+	call	a
+	mov	DWORD PTR -12[rbp], eax
+.L2:
+	jmp	.L2
+	.cfi_endproc
+.LFE0:
+	.size	main, .-main
+	.globl	a
+	.type	a, @function
+a:
+.LFB1:
+	.cfi_startproc
+	endbr64
+	push	rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	mov	rbp, rsp
+	.cfi_def_cfa_register 6
+	mov	QWORD PTR -24[rbp], rdi
+	mov	DWORD PTR -4[rbp], 1
+	mov	edx, DWORD PTR -4[rbp]
+	mov	eax, edx
+	sal	eax, 2
+	add	eax, edx
+	mov	DWORD PTR -4[rbp], eax
+	mov	edx, DWORD PTR -4[rbp]
+	mov	eax, edx
+	sal	eax, 3
+	sub	eax, edx
+	mov	DWORD PTR -4[rbp], eax
+	sub	DWORD PTR -4[rbp], 6
+	mov	edx, DWORD PTR -4[rbp]
+	mov	eax, edx
+	sal	eax, 3
+	add	eax, edx
+	mov	DWORD PTR -4[rbp], eax
+	mov	rax, QWORD PTR -24[rbp]
+	mov	edx, DWORD PTR -4[rbp]
+	mov	DWORD PTR [rax], edx
+	mov	eax, DWORD PTR -4[rbp]
+	pop	rbp
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc
+.LFE1:
+	.size	a, .-a
+	.ident	"GCC: (Ubuntu 11.2.0-19ubuntu1) 11.2.0"
+	.section	.note.GNU-stack,"",@progbits
+	.section	.note.gnu.property,"a"
+	.align 8
+	.long	1f - 0f
+	.long	4f - 1f
+	.long	5
+0:
+	.string	"GNU"
+1:
+	.align 8
+	.long	0xc0000002
+	.long	3f - 2f
+2:
+	.long	0x3
+3:
+	.align 8
+4:
