@@ -5,11 +5,15 @@ int a(int *d);
 int main() {
 	int c = 0;
 	c = a(&c);
+	asm("cli");
+	asm("hlt");
 	c = a(&c);
 	c = a(&c);
 	while(1);
 }
 int a(int *d) {
+	asm("cli");
+	asm("hlt");
 	int b = 1;
 	b *= 5;
 	b *= 7;

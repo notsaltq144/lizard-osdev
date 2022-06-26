@@ -148,12 +148,31 @@ setGDT: ret
 # NOTE base is the start
 # NOTE base + limit = last address
 gdt_start:
+gdt_null:
 # null descriptor
 	.quad 0
+gdt_data:
+	.word 0x01c8 # limit: bits 0-15
+	.word 0x0000 # base:  bits 0-15
+	.byte 0x00   # base:  bits 16-23
+# segment presence: yes (+0x80)
+# descriptor priviledge level: ring 0 (+0x00)
+# descriptor type: code/data (+0x10)
+# executable: no (+0x00)
+# direction bit: grows up (+0x00)
+# writable bit: writable (+0x02)
+# accesed bit [best left 0, cpu will deal with it]: no (+0x00)
+	.byte 0x80 + 0x10 + 0x02
+# granularity flag: limit scaled by 4kib (+0x80)
+# size flag: 32 bit pm (+0x40)
+# long mode flag: 32pm/16pm/data (+0x00)
+# reserved: reserved (+0x00)
+	.byte 0x80 + 0x40 # flags: granularity @ 4-7 limit: bits 16-19 @ 0-3
+	.byte 0x00 # base:  bits 24-31
 gdt_code:
-	.word 0x???? # limit: bits 0-15
-	.word 0x???? # base:  bits 0-15
-	.byte 0x??   # base:  bits 16-23   
+	.word 0x0100 # limit: bits 0-15
+	.word 0x8000 # base:  bits 0-15
+	.byte 0x1c   # base:  bits 16-23   
 # segment presence: yes (+0x80)
 # descriptor priviledge level: ring 0 (+0x00)
 # descriptor type: code/data (+0x10)
@@ -162,13 +181,12 @@ gdt_code:
 # readable bit: yes (0x02)
 # accessed bit [best left 0, cpu will deal with it]: no (0x00)
 	.byte 0x80 + 0x10 + 0x08 + 0x02
-# granularity flag: limit scaled by 1b (+0x00)
+# granularity flag: limit scaled by 4kib (+0x80)
 # size flag: 32 bit pm (+0x40)
-# long mode flag: 32/16pm (+0x00)
+# long mode flag: 32pm/16pm/data (+0x00)
 # reserved: reserved (+0x00)
-	.byte 0x??   # flags: granularity @ 4-7 limit: bits 16-19 @ 0-3
-	.byte 0x??   # base:  bits 24-31
-gdt_data:
+	.byte 0x80 + 0x40 + 0x00   # flags: granularity @ 4-7 limit: bits 16-19 @ 0-3
+	.byte 0x00                 # base:  bits 24-31
 gdt_end:
 gdt_descriptor:
 	.word gdt_end - gdt_start - 1
