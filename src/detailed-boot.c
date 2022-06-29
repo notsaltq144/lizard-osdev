@@ -8,18 +8,15 @@ int main() {
 	c = a(&c);
 	while(1);
 }
+asm("nop");
+asm("nop");
 int a(int *d) {
-	asm("cli");
-	asm("hlt");
 	int b = 1;
 	b *= 5;
 	b *= 7;
 	b -= 6;
 	b *= 9;
 	*d = b;
-s:
-	while (1);
-	goto s;
 	return b;
 }
 //#include "stdc/stdio.c"
