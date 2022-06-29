@@ -143,7 +143,6 @@ enableA20_wait2:
 	test $1,    %al
 	jnz enableA20_wait2
 	ret
-setGDT: ret
 # NOTE limit is the length
 # NOTE base is the start
 # NOTE base + limit = last address
@@ -194,16 +193,21 @@ gdt_descriptor:
 
 .code32
 code32:
-	mov %ds, %ax
-	mov %ax, %ds
-#	mov %ax, %ss
-	mov %ax, %es
-	mov %ax, %fs
-	mov %ax, %gs
-
-	movl $0x4000,  %ebp
-	mov  %esp,     %ebp
-
+	mov $0x0008, %ax
+	mov %ax,     %ss
+	mov $40958,  %esp
+	mov %ax,     %es
+	mov %ax,     %fs
+	mov %ax,     %gs
+	mov %ax,     %ds
+	mov %ax,     %ss
+	movl $0x0000,  %ebp
+	xor %eax, %eax
+	xor %ebx, %ebx
+	xor %ecx, %ecx
+	xor %edx, %edx
+	xor %esi, %esi
+	xor %edi, %edi
 	push $0x7e00
 	ret
 .fill 500-(.-init)

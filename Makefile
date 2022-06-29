@@ -19,7 +19,7 @@ bootloader:
 	as -o $(BOOTLOADER-OBJECTFILE) $(BOOTLOADER-SOURCEFILE)
 	ld -o $(BOOTLOADER-PARTFILE) --oformat binary -e init $(BOOTLOADER-OBJECTFILE) -Ttext 0x7c00
 kernel:
-	$(GCC) -ffunction-sections -ffreestanding $(KERNEL-SOURCEFILE) -o $(KERNEL-OBJECTFILE) -nostdlib -Wall -Wextra -O0
+	$(GCC) -ffunction-sections -ffreestanding $(KERNEL-SOURCEFILE) -o $(KERNEL-OBJECTFILE) -nostdlib -Wall -Wextra -O0 -m32
 	$(LD) -o $(KERNEL-PARTFILE) -Ttext 0x7e00 --oformat binary $(KERNEL-OBJECTFILE) -e main --script=LDfile -O 0 -Ttext-segment 0x7e00
 join:
 	cat $(BOOTLOADER-PARTFILE) $(KERNEL-PARTFILE) > $(SYSFILE)
