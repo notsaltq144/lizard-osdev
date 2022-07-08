@@ -1,2 +1,0 @@
-#define true 1
-

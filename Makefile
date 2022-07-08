@@ -1,30 +1,18 @@
-PRINTDIRECTORY        = --no-print-directory
-BOOTLOADER-PARTFILE   = int/parts/boot.prt
-BOOTLOADER-OBJECTFILE = int/boot.o
-BOOTLOADER-SOURCEFILE = src/boot.s
-KERNEL-PARTFILE       = int/parts/detailed-boot.prt
-KERNEL-OBJECTFILE     = int/detailed-boot.o
-KERNEL-SOURCEFILE     = src/detailed-boot.c
-GCC                   = ~/opt/cross/bin/i686-elf-gcc
-LD                    = ~/opt/cross/bin/i686-elf-ld
-VM                    = qemu-system-i386
-SYSFILE               = lizard.bin
-
-full:
-	make bootloader $(PRINTDIRECTORY)
-	make kernel $(PRINTDIRECTORY)
-	truncate -s 32768 ./int/parts/detailed-boot.prt
-	make join $(PRINTDIRECTORY)
-bootloader:
-	as -o $(BOOTLOADER-OBJECTFILE) $(BOOTLOADER-SOURCEFILE)
-	ld -o $(BOOTLOADER-PARTFILE) --oformat binary -e init $(BOOTLOADER-OBJECTFILE) -Ttext 0x7c00
-kernel:
-	$(GCC) -ffunction-sections -ffreestanding $(KERNEL-SOURCEFILE) -o $(KERNEL-OBJECTFILE) -nostdlib -Wall -Wextra -O0 -m32
-	$(LD) -o $(KERNEL-PARTFILE) -Ttext 0x7e00 --oformat binary $(KERNEL-OBJECTFILE) -e main --script=LDfile -O 1 -Ttext-segment 0x7e00
-join:
-	cat $(BOOTLOADER-PARTFILE) $(KERNEL-PARTFILE) > $(SYSFILE)
-run:
-	$(VM) $(SYSFILE)
-debug:
-	$(VM) $(SYSFILE) -gdb tcp:localhost:6000 -S
+TARGET = BOOTX64.EFI
+ALSO = img run
+CFLAGS = -Wall -Wextra -pedantic
+USE_GCC = 1
+include uefi/Makefile
+img:
+	dd if=/dev/zero of=fat.img bs=1k count=1440
+	mformat -i fat.img -T 524216 -F ::
+	mmd -i fat.img ::/EFI
+	mmd -i fat.img ::/EFI/BOOT
+	mcopy -i fat.img BOOTX64.EFI ::/EFI/BOOT
+	cp fat.img iso
+	xorriso -as mkisofs -R -f -e fat.img -no-emul-boot -o cdimage.img iso
+run: img
+	qemu-system-x86_64 -bios /usr/share/ovmf/OVMF.fd -cdrom cdimage.img
+gitignore:
+	pastaignore -i .gitignore.pastaignore -o .gitignore --verbose --remove-duplicates
 

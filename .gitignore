@@ -1,1 +1,3 @@
-cc
+./fat.img
+./iso/fat.img
+./uefi.o
