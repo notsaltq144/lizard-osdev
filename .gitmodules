@@ -1,0 +1,3 @@
+[submodule "libMakefile"]
+	path = libMakefile
+	url = https://github.com/saltq144/libMakefile
