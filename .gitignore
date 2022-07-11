@@ -1,3 +1,6 @@
 ./fat.img
+./int/doswarn.bin
+./int/doswarn.o
 ./iso/fat.img
+./src/uefi.o
 ./uefi.o
