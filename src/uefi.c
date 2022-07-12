@@ -15,13 +15,7 @@ const int backupClearscreenNewlineCount = 200;
 void bcdToAscii(unsigned char src, char *dest); // This function is licensed under CC BY-SA 2.5. See definition for more details.
 int charToBcd(int x); // This function however, is not.
 int askUserContinue(const char *message, int noVal, int yesVal);
-int foo(char bar[]);
 int main(void) {
-	if (false) {
-		// do
-	}
-	int foo = foo;
-	
 	/* some variables */
 	efi_status_t status;
 	u64 tmp = 0;
@@ -34,8 +28,8 @@ int main(void) {
 	/* some info */
 	printf("Booting to %s, currently in src:%s obj:%s bin:%s!\n", OSNAME, __FILE__, OBJNAME, BINNAME);
 	if (tmp == 1)
-		printf("WARNING: Screen was unable clear using UEFI. The screen was cleared using %x newlines. This may be a sympton of a larger problem with %s or your firmware.\n",
-		  charToBcd(backupClearscreenNewlineCount), OSNAME);
+		printf("WARNING: Screen was unable clear using UEFI. The screen was cleared using %d newlines. This may be a sympton of a larger problem with %s or your firmware.\n",
+		  backupClearscreenNewlineCount, OSNAME);
 	printf("A LOT of messages will be printed.\n", charToBcd(backupClearscreenNewlineCount));
 	/* uefi watchdog is a good thing, no uefi app should run for ~5 minutes, except ui applications, which this is (very minimaly) */
 	ST->BootServices->SetWatchdogTimer(0, 0, 0, NULL);
@@ -53,10 +47,10 @@ int main(void) {
 	printf("  Signature: 0x%x\n", ST->Hdr.Signature);
 	printf("  Revision: 0x%x (%s, this may not have a spec listed with it, in this case round down to the nearest with errata in mind)\n", ST->Hdr.Revision, revision);
 	printf("  CRC32: 0x%x\n", ST->Hdr.CRC32);
-	printf("  HeaderSize: %x\n", charToBcd(ST->Hdr.HeaderSize));
+	printf("  HeaderSize: %d\n", ST->Hdr.HeaderSize);
 	if ((revision_buffer_canary_pre != canary_value) || (revision_buffer_canary_post != canary_value)) {
-		printf("Canary corruption, system may be in unstable state!\n Data: sizeof(buffer) %x canary-pre %p canary-post %p buffer %p\n",
-		  charToBcd(sizeof(revision)), &revision_buffer_canary_pre, &revision_buffer_canary_post, revision); 
+		printf("Canary corruption, system may be in unstable state!\n Data: sizeof(buffer) %d canary-pre %p canary-post %p buffer %p\n",
+		  sizeof(revision), &revision_buffer_canary_pre, &revision_buffer_canary_post, revision); 
 		if (askUserContinue("Canary corruption has occured. Do you want to continue [y/n]. ", RETURN___STATUS_ERROR, 0)) return RETURN___STATUS_ERROR;
 	}
 	/* calculate crc32 of SystemTable */
@@ -124,8 +118,5 @@ askUserContinue_ask:
 		return yesVal;
 	}
 	goto askUserContinue_ask;
-}
-int foo(char x[]) {
-	return sizeof(x);
 }
 
