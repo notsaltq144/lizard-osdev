@@ -7,21 +7,15 @@ SRCS = src/uefi.c
 OUTDIR = int/
 include uefi/Makefile
 
-INTDIR = int/
-img: doswarn
-	dd if=/dev/zero of=fat.img bs=1k count=1440
-	mformat -i fat.img -T 524216 -F :: -v "lizardOS   "
-	mmd -i fat.img ::/EFI
-	mmd -i fat.img ::/EFI/BOOT
-	mcopy -i fat.img int/BOOTX64.EFI ::/EFI/BOOT
-	cp fat.img iso
-	xorriso -as mkisofs -R -f -e fat.img -no-emul-boot -o cdimage.img iso
-	dd if=$(OUTDIR)doswarn.bin of=cdimage.img bs=512 count=1 conv=notrunc
+img: 
+	dd if=/dev/zero of=hdimage.iso bs=1k count=1440
+	./fdisk.sh
+	mformat -i hdimage.iso -T 524216 -F :: -v "lizardOS   "
+	mmd -i hdimage.iso ::/EFI
+	mmd -i hdimage.iso ::/EFI/BOOT
+	mcopy -i hdimage.iso int/BOOTX64.EFI ::/EFI/BOOT
 run: img
-	qemu-system-x86_64 -bios /usr/share/ovmf/OVMF.fd -cdrom cdimage.img
+	qemu-system-x86_64 -bios /usr/share/ovmf/OVMF.fd -hda hdimage.iso
 gitignore:
 	pastaignore -i .gitignore.pastaignore -o .gitignore --verbose --remove-duplicates
-doswarn:
-	as src/doswarn.asm -o $(OUTDIR)doswarn.o
-	ld -o $(OUTDIR)doswarn.bin $(OUTDIR)doswarn.o -e start --oformat binary -Ttext 0x7c00
 
