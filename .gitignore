@@ -1,6 +1,4 @@
-./fat.img
-./int/doswarn.bin
-./int/doswarn.o
-./iso/fat.img
-./src/uefi.o
+./int/BOOTX64.EFI
+./int/src
+./int/src/uefi.o
 ./uefi.o

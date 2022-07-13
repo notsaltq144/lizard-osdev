@@ -7,6 +7,7 @@
 
 #define RETURN___STATUS_ERROR 1
 #define RETURN___CRC32_NO_MATCH 2
+#define RETURN___RESERVED_WRONG 3
 
 const char *OSNAME = "lizard";
 const char *BINNAME = "/EFI/BOOT/BOOTX64.EFI";
@@ -51,6 +52,7 @@ int main(void) {
 	printf("  Revision: 0x%x (%s, this may not have a spec listed with it, in this case round down to the nearest with errata in mind)\n", ST->Hdr.Revision, revision);
 	printf("  CRC32: 0x%x\n", ST->Hdr.CRC32);
 	printf("  HeaderSize: %d\n", ST->Hdr.HeaderSize);
+	if (ST->Hdr.Reserved != 0) if (askUserContinue("ST->Hdr.Reserved value is incorrect. Do you want to continue [y/n]. ", RETURN___RESERVED_WRONG, 0)) return RETURN___RESERVED_WRONG;
 	if ((revision_buffer_canary_pre != canary_value) || (revision_buffer_canary_post != canary_value)) {
 		printf("Canary corruption, system may be in unstable state!\n Data: sizeof(buffer) %d canary-pre %p canary-post %p buffer %p\n",
 		  sizeof(revision), &revision_buffer_canary_pre, &revision_buffer_canary_post, revision); 
