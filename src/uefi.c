@@ -14,8 +14,7 @@ const char *BINNAME = "/EFI/BOOT/BOOTX64.EFI";
 const char *OBJNAME = "uefi.o";
 const int backupClearscreenNewlineCount = 200;
 
-void bcdToAscii(unsigned char src, char *dest); // This function is licensed under CC BY-SA 2.5. See definition for more details.
-int charToBcd(int x); // This function however, is not.
+int charToBcd(int x);
 int askUserContinue(const char *message, int noVal, int yesVal);
 char *specializedShortToString(const char* buffer, short x);
 
@@ -81,24 +80,6 @@ int main(void) {
 	while (true);
 	return 0;
 }
-/*
- * The following code is licensed under CC BY-SA 2.5
- * Source: https://stackoverflow.com/a/3579170/19418319
- * The name (not parameters) of the function has been modified without endorsement from the original source. Spaces have been modified to tabs without endorsement from the original source.
- * Written by Thomas Matthews on stackoverflow (https://stackoverflow.com/users/225074/thomas-matthews)
- * Modified by saltq144 on github (https://github.com/saltq144)
- * A function that converts a given BCD byte to a string and stores it in a given destination
- * (c) Thomas Matthews 2010
- */
-void bcdToAscii(unsigned char src, char *dest) {
-	static const char outputs[] = "0123456789ABCDEF";
-	*dest++ = outputs[src>>4];
-	*dest++ = outputs[src&0xf];
-	*dest = '\0';
-}
-/*
- * End of CC BY-SA licensed code.
- */
 
 /*
  * The following code is licensed unfer CC BY-SA 2.5
@@ -181,3 +162,4 @@ char *specializedShortToString(const char* buffer, short x) {
 	strrev((char*)buffer);
 	return nullAdr;
 }
+
