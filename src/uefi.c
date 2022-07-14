@@ -40,13 +40,15 @@ int main(void) {
 	printf("Disabled UEFI watchdog. If %s hangs, UEFI will not forcefully exit.\n", OSNAME);
 
 	u64 revision_buffer_canary_pre = canary_value;
-#warning you need to account for version 2.4.6 and similar
-	char revision[5+1+2+1]; /* SIZE: 5 (major) + 1 (dot) + 2 (minor) + 1 (null) */
+	char revision[5+1+2+1]; /* SIZE: 5 (major) + 1 (dot) + 1 (minor upper) + 1 (dot) + 1 (minor lower) */
 	u64 revision_buffer_canary_post = canary_value;
 	char *dotAddr = specializedShortToString(revision, ((ST->Hdr.Revision) & 0xFFFF0000) >> 16);
 	*dotAddr++ = '.';
+	*dotAddr++ = '0' + (((ST->Hdr.Revision % 0x100) / 10) % 10);
+	if ((ST->Hdr.Revision % 0x100) % 10) *dotAddr++ = '.';
+	*dotAddr++ = '0' + ((ST->Hdr.Revision % 0x100) % 10);
+	*dotAddr++ = 0;
 
-	bcdToAscii((char)ST->Hdr.Revision & 0x000000FF, dotAddr);
 	printf("SystemTable (ST) Header (ST->Hdr)\n");
 	printf("  Signature: 0x%x\n", ST->Hdr.Signature);
 	printf("  Revision: 0x%x (%s, this may not have a spec listed with it, in this case round down to the nearest with errata in mind)\n", ST->Hdr.Revision, revision);
