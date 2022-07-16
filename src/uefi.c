@@ -35,8 +35,9 @@ int main(void) {
 		  backupClearscreenNewlineCount, OSNAME);
 	printf("A LOT of messages will be printed.\n", charToBcd(backupClearscreenNewlineCount));
 	/* uefi watchdog is a good thing, no uefi app should run for ~5 minutes, except ui applications, which this is (very minimaly) */
-	ST->BootServices->SetWatchdogTimer(0, 0, 0, NULL);
-	printf("Disabled UEFI watchdog. If %s hangs, UEFI will not forcefully exit.\n", OSNAME);
+	status = ST->BootServices->SetWatchdogTimer(0, 0, 0, NULL);
+	if (EFI_ERROR(status)) if (askUserContinue("Unable to disable UEFI watchdog. Do you want to continue [y/n]. ", RETURN___STATUS_ERROR, 0)) return RETURN___STATUS_ERROR;
+	if (!EFI_ERROR(status)) printf("Disabled UEFI watchdog. If %s hangs, UEFI will not forcefully exit.\n", OSNAME);
 
 	u64 revision_buffer_canary_pre = canary_value;
 	char revision[5+1+2+1]; /* SIZE: 5 (major) + 1 (dot) + 1 (minor upper) + 1 (dot) + 1 (minor lower) */
