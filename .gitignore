@@ -1,4 +1,5 @@
 ./int/BOOTX64.EFI
+./int/efipart.iso
 ./int/src
 ./int/src/uefi.o
 ./uefi.o
