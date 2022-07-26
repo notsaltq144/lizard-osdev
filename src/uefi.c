@@ -9,7 +9,8 @@
 #define RETURN___CRC32_NO_MATCH 2
 #define RETURN___RESERVED_WRONG 3
 
-const char *OSNAME = "lizard";
+#include "osinfo.h"
+
 const char *BINNAME = "/EFI/BOOT/BOOTX64.EFI";
 const char *OBJNAME = "uefi.o";
 const int backupClearscreenNewlineCount = 200;
