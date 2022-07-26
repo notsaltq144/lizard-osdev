@@ -16,7 +16,7 @@ const int backupClearscreenNewlineCount = 200;
 
 int charToBcd(int x);
 int askUserContinue(const char *message, int noVal, int yesVal);
-char *specializedShortToString(const char* buffer, short x);
+char *specializedShortToString(char *buffer, short x);
 
 int main(void) {
 	/* some variables */
@@ -149,14 +149,14 @@ askUserContinue_ask:
 	goto askUserContinue_ask;
 }
 
-char *specializedShortToString(const char* buffer, short x) {
-	char *nullAdr = (char*)buffer;
+char *specializedShortToString(char *buffer, short x) {
+	char *nullAdr = buffer;
 	while (x) {
 		*nullAdr++ = '0' + (x % 10);
 		x /= 10;
 	}
 	*nullAdr = 0;
-	strrev((char*)buffer);
+	strrev(buffer);
 	return nullAdr;
 }
 
