@@ -1,4 +1,8 @@
 ./int/BOOTX64.EFI
+./int/dosmain.bin
+./int/dosmain.o
+./int/dossign.bin
+./int/dossign.o
 ./int/efipart.iso
 ./int/src
 ./int/src/uefi.o
