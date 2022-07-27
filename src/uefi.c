@@ -41,11 +41,11 @@ int main(void) {
 	uint64_t revision_buffer_canary_pre = canary_value;
 	char revision[5+1+2+1]; /* SIZE: 5 (major) + 1 (dot) + 1 (minor upper) + 1 (dot) + 1 (minor lower) */
 	uint64_t revision_buffer_canary_post = canary_value;
-	char *dotAddr = specializedShortToString(revision, ((ST->Hdr.Revision) & 0xFFFF0000) >> 16);
+	char *dotAddr = specializedShortToString(revision, ((ST->Hdr.Revision) & 0xFFFF0000) >> 16); /* X.y.z */
 	*dotAddr++ = '.';
-	*dotAddr++ = '0' + (((ST->Hdr.Revision % 0x100) / 10) % 10);
-	if ((ST->Hdr.Revision % 0x100) % 10) *dotAddr++ = '.';
-	*dotAddr++ = '0' + ((ST->Hdr.Revision % 0x100) % 10);
+	*dotAddr++ = '0' + (((ST->Hdr.Revision % 0x100) / 10) % 10); /* x.Y.z*/
+	if ((ST->Hdr.Revision % 0x100) % 10) *dotAddr++ = '.'; /* add dot in case of x.y.z */
+	*dotAddr++ = '0' + ((ST->Hdr.Revision % 0x100) % 10); /* x.y.Z*/
 	*dotAddr++ = 0;
 
 	printf("SystemTable (ST) Header (ST->Hdr)\n");
