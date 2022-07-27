@@ -1,8 +1,6 @@
 #include <uefi.h>
 #include <stdbool.h>
 #include <string.h>
-#include "uefi_types.h"
-#include "verify_types.h"
 #include "magic.h"
 
 #define RETURN___STATUS_ERROR 1
@@ -22,7 +20,7 @@ char *specializedShortToString(char *buffer, short x);
 int main(void) {
 	/* some variables */
 	efi_status_t status;
-	u64 tmp = 0;
+	uint64_t tmp = 0;
 	/* we don't need UEFI console bloat */
 	status = ST->ConOut->ClearScreen(ST->ConOut);
 	if (EFI_ERROR(status)) {
@@ -40,9 +38,9 @@ int main(void) {
 	if (EFI_ERROR(status)) if (askUserContinue("Unable to disable UEFI watchdog. Do you want to continue [y/n]. ", RETURN___STATUS_ERROR, 0)) return RETURN___STATUS_ERROR;
 	if (!EFI_ERROR(status)) printf("Disabled UEFI watchdog. If %s hangs, UEFI will not forcefully exit.\n", OSNAME);
 
-	u64 revision_buffer_canary_pre = canary_value;
+	uint64_t revision_buffer_canary_pre = canary_value;
 	char revision[5+1+2+1]; /* SIZE: 5 (major) + 1 (dot) + 1 (minor upper) + 1 (dot) + 1 (minor lower) */
-	u64 revision_buffer_canary_post = canary_value;
+	uint64_t revision_buffer_canary_post = canary_value;
 	char *dotAddr = specializedShortToString(revision, ((ST->Hdr.Revision) & 0xFFFF0000) >> 16);
 	*dotAddr++ = '.';
 	*dotAddr++ = '0' + (((ST->Hdr.Revision % 0x100) / 10) % 10);
