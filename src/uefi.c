@@ -9,7 +9,7 @@
 
 #include "osinfo.h"
 
-const char *BINNAME = "/EFI/BOOT/BOOTX64.EFI";
+const char *BINNAME = "efipart/EFI/BOOT/BOOTX64.EFI";
 const char *OBJNAME = "uefi.o";
 const int backupClearscreenNewlineCount = 200;
 
