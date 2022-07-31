@@ -31,7 +31,7 @@ dosmain:
 	ld -o $(OUTDIR)dosmain.bin $(OUTDIR)dosmain.o -e start --oformat binary -Ttext 0x7c00
 dossign:
 	as src/doswarn/sign.asm -o $(OUTDIR)dossign.o
-	ld -o $(OUTDIR)dossign.bin $(OUTDIR)dossign.o --oformat binary
+	ld -o $(OUTDIR)dossign.bin $(OUTDIR)dossign.o -e _start --oformat binary
 gitignore:
 	pastaignore -i .gitignore.pastaignore -o .gitignore --verbose --remove-duplicates
 file:

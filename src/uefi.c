@@ -31,7 +31,7 @@ int main(void) {
 	}
 	char *data = "abcdefgh";
 	printf("hello!\n");
-	printf("CHECKSUM: %x\n", crc64(data, 8, 1, 0, 0));
+	printf("CHECKSUM: %x\n", crc64((uint8_t*)data, 8, 1, 0, 0));
 	/* some info */
 	printf("Booting to %s, currently in src:%s obj:%s bin:%s!\n", OSNAME, __FILE__, OBJNAME, BINNAME);
 	if (tmp == 1)
