@@ -4,5 +4,6 @@
 ./int/dossign.bin
 ./int/dossign.o
 ./int/efipart.iso
+./int/file.bin
 ./int/src
 ./int/src/uefi.o

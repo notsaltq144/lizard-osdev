@@ -11,7 +11,7 @@ EFIPARTNUM   = 1
 EFIPARTSTART = 34
 EFIPARTEND   = 2846
 
-img: doswarn
+img: doswarn file
 	dd if=/dev/zero of=hdimage.iso bs=1k count=1440
 	./fdisk.sh $(EFIPARTNUM) $(EFIPARTSTART) $(EFIPARTEND)
 	dd if=hdimage.iso of=int/efipart.iso skip=$(EFIPARTSTART) bs=512 count=$$(( ( $(EFIPARTEND) - $(EFIPARTSTART) ) + 1))
@@ -19,6 +19,7 @@ img: doswarn
 	mmd -i int/efipart.iso ::/EFI
 	mmd -i int/efipart.iso ::/EFI/BOOT
 	mcopy -i int/efipart.iso int/BOOTX64.EFI ::/EFI/BOOT
+	mcopy -i int/efipart.iso int/file.bin ::/
 	dd if=int/efipart.iso of=hdimage.iso bs=512 seek=34 conv=notrunc
 	dd if=int/dosmain.bin of=hdimage.iso conv=notrunc
 	dd if=int/dossign.bin of=hdimage.iso bs=1 seek=510 conv=notrunc
@@ -33,4 +34,5 @@ dossign:
 	ld -o $(OUTDIR)dossign.bin $(OUTDIR)dossign.o --oformat binary
 gitignore:
 	pastaignore -i .gitignore.pastaignore -o .gitignore --verbose --remove-duplicates
-
+file:
+	nasm -fbin src/file.asm -o int/file.bin
