@@ -1,3 +1,6 @@
 [submodule "libMakefile"]
 	path = libMakefile
 	url = https://github.com/saltq144/libMakefile
+[submodule "uefi"]
+	path = uefi
+	url = https://gitlab.com/topiasq333fl/uefi
