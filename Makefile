@@ -1,7 +1,7 @@
 include libMakefile/C.make
 TARGET = BOOTX64.EFI
 ALSO = img run
-CFLAGS = $(C-GCC-WFLAGS)
+CFLAGS = $(C-GCC-WFLAGS) -DUEFI_NO_TRACK_ALLOC
 USE_GCC = 1
 SRCS = src/uefi.c
 OUTDIR = int/
