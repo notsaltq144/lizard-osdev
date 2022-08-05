@@ -9,6 +9,7 @@
 
 #include "osinfo.h"
 #include "crc64/crc64.c"
+#include "regs.h"
 
 const char *BINNAME = "efipart/EFI/BOOT/BOOTX64.EFI";
 const char *OBJNAME = "uefi.o";
@@ -17,7 +18,8 @@ const int backupClearscreenNewlineCount = 200;
 int charToBcd(int x);
 int askUserContinue(const char *message, int noVal, int yesVal);
 char *specializedShortToString(char *buffer, short x);
-void userspace(void);
+void apitest(void);
+void call_function_with_gregs(void *func, gregs_t *regs) __attribute__((sysv_abi, no_caller_saved_registers));
 
 int main(void) {
 	/* some variables */
@@ -29,9 +31,6 @@ int main(void) {
 		for (int i = 0; i < backupClearscreenNewlineCount; i++) printf("\n");
 		tmp = 1;
 	}
-	char *data = "abcdefgh";
-	printf("hello!\n");
-	printf("CHECKSUM: %x\n", crc64((uint8_t*)data, 8, 1, 0, 0));
 	/* some info */
 	printf("Booting to %s, currently in src:%s obj:%s bin:%s!\n", OSNAME, __FILE__, OBJNAME, BINNAME);
 	if (tmp == 1)
@@ -91,14 +90,17 @@ int main(void) {
 	size = ftell(file);
 	fseek(file, 0, SEEK_SET);
 	printf("File size: %d bytes\n", size);
-	buff = malloc(size + 1);
+	buff = malloc(size);
 	fread(buff, size, 1, file);
-	buff[size] = 0;
 	fclose(file);
-	printf("File contents:\n%s\n", buff);
-	free(buff);
 
-	*((void**)&userspace) = (void*)buff;
+	gregs_t regs;
+	memset((void*)&regs, 0, sizeof(regs));
+	regs.rax = (uint64_t)apitest;
+	call_function_with_gregs((void*)buff, &regs);
+
+	//((void(*)())buff)();
+
 
 	printf("WERE OUTTA THE PROGRAM\n");
 
@@ -182,5 +184,9 @@ char *specializedShortToString(char *buffer, short x) {
 	*nullAdr = 0;
 	strrev(buffer);
 	return nullAdr;
+}
+void apitest(void) {
+	printf("apitest: called\n");
+	return;
 }
 

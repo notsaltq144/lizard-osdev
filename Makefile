@@ -4,7 +4,8 @@ ALSO = img run
 CFLAGS = $(C-GCC-WFLAGS) -DUEFI_NO_TRACK_ALLOC
 USE_GCC = 1
 SRCS = src/uefi.c
-OUTDIR = int/
+OUTDIR = int
+EXTRA = int/call_function_with_regs.o
 include uefi/Makefile
 
 EFIPARTNUM   = 1
@@ -32,6 +33,9 @@ dosmain:
 dossign:
 	as src/doswarn/sign.asm -o $(OUTDIR)dossign.o
 	ld -o $(OUTDIR)dossign.bin $(OUTDIR)dossign.o -e _start --oformat binary
+int/call_function_with_regs.o:
+	nasm -felf64 -o int/call_function_with_regs.o src/call_function_with_regs.asm
+
 gitignore:
 	pastaignore -i .gitignore.pastaignore -o .gitignore --verbose --remove-duplicates
 file:

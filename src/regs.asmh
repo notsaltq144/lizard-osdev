@@ -1,0 +1,19 @@
+struc gregs_t
+	rrax: resq 1
+	rrbx: resq 1
+	rrcx: resq 1
+	rrdx: resq 1
+	rrbp: resq 1
+	rrsp: resq 1
+	rrsi: resq 1
+	rrdi: resq 1
+	rr8:  resq 1
+	rr9:  resq 1
+	rr10: resq 1
+	rr11: resq 1
+	rr12: resq 1
+	rr13: resq 1
+	rr14: resq 1
+	rr15: resq 1
+endstruc
+
