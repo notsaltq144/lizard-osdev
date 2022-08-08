@@ -20,6 +20,7 @@ int askUserContinue(const char *message, int noVal, int yesVal);
 char *specializedShortToString(char *buffer, short x);
 void apitest(void);
 void call_function_with_gregs(void *func, gregs_t *regs) __attribute__((sysv_abi, no_caller_saved_registers));
+void reverse_string(char *str);
 
 int main(void) {
 	/* some variables */
@@ -142,3 +143,26 @@ void apitest(void) {
 	return;
 }
 
+
+
+char *specializedShortToString(char *buffer, short x) {
+	char *nullAdr = buffer;
+	while (x) {
+		*nullAdr++ = '0' + (x % 10);
+		x /= 10;
+	}
+	*nullAdr = 0;
+	reverse_string(buffer);
+	return nullAdr;
+}
+
+void reverse_string(char *str) {
+	int len = strlen(str);
+	char di;
+	for (int i = 0; i < len; i++) {
+		di = str[i];
+		str[i] = str[len - i];
+		str[len - i] = di;
+	}
+	return;
+}
