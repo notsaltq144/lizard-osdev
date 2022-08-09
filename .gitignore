@@ -2,4 +2,5 @@ int
 hdimage.iso
 uefi/*.o
 uefi/*.a
+doc/*.backup
 
