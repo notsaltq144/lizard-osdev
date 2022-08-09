@@ -8,6 +8,8 @@ global call_function_with_gregs
 ; call_function_with_gregs(void *func, gregs_t *regs) __attribute__((sysv_abi, no_caller_saved_registers));
 
 call_function_with_gregs:
+; don't crash in case of CET
+	endbr64
 ; preserve registers
 	push rax
 	push rbx
