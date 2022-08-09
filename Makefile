@@ -26,11 +26,11 @@ img: doswarn file
 	dd if=int/dossign.bin of=hdimage.iso bs=1 seek=510 conv=notrunc
 run: img
 	qemu-system-x86_64 -bios /usr/share/ovmf/OVMF.fd -hda hdimage.iso
-doswarn: dosmain dossign
-dosmain:
+doswarn: int/dosmain.bin int/dossign.bin
+int/dosmain.bin: src/doswarn/main.asm
 	as src/doswarn/main.asm -o $(OUTDIR)dosmain.o
 	ld -o $(OUTDIR)dosmain.bin $(OUTDIR)dosmain.o -e start --oformat binary -Ttext 0x7c00
-dossign:
+int/dossign: src/doswarn/sign.asm
 	as src/doswarn/sign.asm -o $(OUTDIR)dossign.o
 	ld -o $(OUTDIR)dossign.bin $(OUTDIR)dossign.o -e _start --oformat binary
 int/call_function_with_regs.o: src/call_function_with_regs.asm
