@@ -33,7 +33,8 @@ dosmain:
 dossign:
 	as src/doswarn/sign.asm -o $(OUTDIR)dossign.o
 	ld -o $(OUTDIR)dossign.bin $(OUTDIR)dossign.o -e _start --oformat binary
-int/call_function_with_regs.o:
+int/call_function_with_regs.o: src/call_function_with_regs.asm
 	nasm -felf64 -o int/call_function_with_regs.o src/call_function_with_regs.asm
 file:
 	nasm -fbin src/file.asm -o int/file.bin
+
