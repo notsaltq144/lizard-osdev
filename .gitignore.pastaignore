@@ -1,3 +1,0 @@
-"\.\/.*\.img" not "\.\/cdimage.img"
-"\.\/.*\.o" not "\.\/uefi\/.*\.o"
-"\.\/int\/.*" not "/note/notExcludingAnything"

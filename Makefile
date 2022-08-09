@@ -35,8 +35,5 @@ dossign:
 	ld -o $(OUTDIR)dossign.bin $(OUTDIR)dossign.o -e _start --oformat binary
 int/call_function_with_regs.o:
 	nasm -felf64 -o int/call_function_with_regs.o src/call_function_with_regs.asm
-
-gitignore:
-	pastaignore -i .gitignore.pastaignore -o .gitignore --verbose --remove-duplicates
 file:
 	nasm -fbin src/file.asm -o int/file.bin
