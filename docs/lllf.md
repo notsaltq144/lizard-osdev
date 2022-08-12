@@ -26,3 +26,32 @@ Table 2. h_flags
 | 0x0000_0000_0000_0001 | CRC Enabled           | hf_crc    |
 | 0x0000_0000_0000_0002 | Is object file        | hf_obj    |
 | 0x0000_0000_0000_0004 | Loads/is dynamic file | hf_dyn    |
+
+Table 3. Segment seperator format
+
+| Offset | Size | Description              | Code name  |
+| :----- | :--- | :----------------------- | :--------- |
+| 0      | 8    | Size of segment in bytes | s_sz       |
+| 8      | 1    | Type of segment          | s_t        |
+
+Table 4. s_t
+
+| Value | Description     | Code name  |
+| :---- | :-------------- | :--------- |
+| 0     | Invalid         | st_inv     |
+| 1     | Code            | st_code    |
+| 2     | Writable Data   | st_data    |
+| 3     | Read only data  | st_rodata  |
+| 4     | Write only data | st_wodata  |
+| 5     | Unreadable Code | st_nrcode  |
+
+Table 5. Attributes of s_t values.
+
+| Value     | Readable | Writable | Executable |
+| :-------- | :------- | :------- | :--------- |
+| st_inv    | No       | No       | No         |
+| st_code   | Yes      | No       | Yes        |
+| st_data   | Yes      | Yes      | No         |
+| st_rodata | Yes      | No       | No         |
+| st_wodata | No       | Yes      | No         |
+| st_nrcode | No       | No       | Yes
