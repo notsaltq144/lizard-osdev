@@ -8,8 +8,8 @@
 #define RETURN___RESERVED_WRONG 3
 
 #include "osinfo.h"
-#include "crc64/crc64.c"
 #include "regs.h"
+#include "crc64/crc64.h"
 
 const char *BINNAME = "efipart/EFI/BOOT/BOOTX64.EFI";
 const char *OBJNAME = "uefi.o";
@@ -44,18 +44,20 @@ int main(void) {
 	if (!EFI_ERROR(status)) printf("Disabled UEFI watchdog. If %s hangs, UEFI will not forcefully exit.\n", OSNAME);
 
 	uint64_t revision_buffer_canary_pre = canary_value;
-	char revision[5+1+2+1]; /* SIZE: 5 (major) + 1 (dot) + 1 (minor upper) + 1 (dot) + 1 (minor lower) */
+	char revision[5+1+2+1+10]; /* SIZE: 5 (major) + 1 (dot) + 1 (minor upper) + 1 (dot) + 1 (minor lower) + 10 (padding) */
 	uint64_t revision_buffer_canary_post = canary_value;
 	char *dotAddr = specializedShortToString(revision, ((ST->Hdr.Revision) & 0xFFFF0000) >> 16); /* X.y.z */
-	*dotAddr++ = '.';
-	*dotAddr++ = '0' + (((ST->Hdr.Revision % 0x100) / 10) % 10); /* x.Y.z*/
+	*++dotAddr = '.';
+	*++dotAddr = '0' + (((ST->Hdr.Revision % 0x100) / 10) % 10); /* x.Y.z*/
 	if ((ST->Hdr.Revision % 0x100) % 10) *dotAddr++ = '.'; /* add dot in case of x.y.z */
-	*dotAddr++ = '0' + ((ST->Hdr.Revision % 0x100) % 10); /* x.y.Z*/
-	*dotAddr++ = 0;
+	*++dotAddr = '0' + ((ST->Hdr.Revision % 0x100) % 10); /* x.y.Z*/
+	*++dotAddr = 0;
+
+	printf("CRC64(abc): %x\n", crc64("abc", 3, 0x777, 0, 0));
 
 	printf("SystemTable (ST) Header (ST->Hdr)\n");
 	printf("  Signature: 0x%x\n", ST->Hdr.Signature);
-	printf("  Revision: 0x%x (%s, this may not have a spec listed with it, in this case round down to the nearest with errata in mind)\n", ST->Hdr.Revision, revision);
+	printf("  Revision: 0x%x (%s)\n", ST->Hdr.Revision, revision+1);
 	printf("  CRC32: 0x%x\n", ST->Hdr.CRC32);
 	printf("  HeaderSize: %d\n", ST->Hdr.HeaderSize);
 	if (ST->Hdr.Reserved != 0) if (askUserContinue("ST->Hdr.Reserved value is incorrect. Do you want to continue [y/n]. ", RETURN___RESERVED_WRONG, 0)) return RETURN___RESERVED_WRONG;

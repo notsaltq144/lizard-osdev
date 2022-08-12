@@ -1,6 +1,8 @@
 // This is ported to C from <https://github.com/jancajthaml-go/crc64/blob/master/crc.go>
 // That code is licensed under <Unlicense>, however this code is licensed under the license of this (osdev) project.
 
+#include <uefi.h>
+
 uint64_t crc64(uint8_t data[], size_t len, uint64_t poly, uint64_t init, uint64_t xorout) {
 	uint64_t crc = init;
 	uint64_t bit;

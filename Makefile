@@ -5,7 +5,7 @@ CFLAGS = $(C-GCC-WFLAGS) -DUEFI_NO_TRACK_ALLOC
 USE_GCC = 1
 SRCS = src/uefi.c
 OUTDIR = int
-EXTRA = int/call_function_with_regs.o
+EXTRA = int/call_function_with_regs.o int/crc64.o
 include uefi/Makefile
 
 EFIPARTNUM   = 1
@@ -39,6 +39,8 @@ int/call_function_with_regs.o: src/call_function_with_regs.asm
 	nasm -felf64 -o int/call_function_with_regs.o src/call_function_with_regs.asm
 int/efipartwarn.bin: src/partwarn/efipart.asm
 	nasm -fbin src/partwarn/efipart.asm -o int/efipartwarn.bin
+int/crc64.o: src/crc64/crc64.c
+	gcc -Ofast src/crc64/crc64.c -o int/crc64.o -I./uefi -ffreestanding -c
 file:
 	nasm -fbin src/file.asm -o int/file.bin
 
