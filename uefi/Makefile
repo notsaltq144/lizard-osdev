@@ -73,11 +73,8 @@ else
 ALLTARGETS = $./crt_$(ARCH).o uefi/libuefi.a $(OBJS) $(TARGET)
 endif
 
-all: b list $(OUTDIR) $(EXTRA) $(ALLTARGETS) $(ALSO)
-t:
-	echo t $(OUTDIR) $(EXTRA) $(ALLTARGETS) $(ALSO)
-b:
-	echo $.
+all: $(OUTDIR) $(EXTRA) $(ALLTARGETS) $(ALSO)
+
 ifneq ($(OUTDIR),)
 $(OUTDIR):
 	@mkdir -p $(OUTDIR)
@@ -103,19 +100,17 @@ ifneq ($(USE_GCC),)
 endif
 
 $(addprefix $(OUTDIR),$(TARGET).so): $(addprefix $(OUTDIR),$(OBJS)) $(EXTRA)
-	echo HI
-	echo $(LDFLAGS) $^ $(LIBS)
 	$(LD) $(LDFLAGS) $^ $(LIBS)
 	@rm $(addprefix $(OUTDIR),*.lib) 2>/dev/null || true
 
 uefi/%.o: uefi/%.c
-	$(CC)  -g1 -I$(shell echo $(lastword $(MAKEFILE_LIST))) $(CFLAGS) -c $< -o $@
+	$(CC) -I$(shell echo $(lastword $(MAKEFILE_LIST))) $(CFLAGS) -c $< -o $@
 
 %.o: %.c
 	$(CC) -I. -I$(shell echo $(lastword $(MAKEFILE_LIST))) $(CFLAGS) -c $< -o $(addprefix $(OUTDIR),$@)
 
 %.o: %.S
-	$(CC)  -g3 -I$(shell echo "$(lastword $(MAKEFILE_LIST))" | rev | cut -c9- | rev) $(CFLAGS) -c $< -o $(addprefix $(OUTDIR),$@)
+	$(CC) -I$(shell echo "$(lastword $(MAKEFILE_LIST))" | rev | cut -c9- | rev) $(CFLAGS) -c $< -o $(addprefix $(OUTDIR),$@)
 
 buildlib:
 	@mkdir ../build ../build/uefi 2>/dev/null || true
@@ -135,8 +130,4 @@ ifeq ($(wildcard uefi/Makefile),)
 else
 	@rm uefi/*.o uefi/libuefi.a 2>/dev/null || true
 endif
-
-.PHONY: list
-list:
-	@LC_ALL=C $(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
 
