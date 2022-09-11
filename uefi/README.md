@@ -92,7 +92,7 @@ git checkout
 | `EXTRA`    | any additional object files you might want to link with, these are also called as makefile rules before compiling |
 | `ALSO`     | additional makefile rules to be called after compiling                                                            |
 | `OUTDIR`   | if given, then your project's object files are generated into this directory (by default not set)                 |
-| `USE_GCC`  | set this if you want native GNU gcc + ld + objcopy instead of LLVM Clang + Lld                                   |
+| `USE_GCC`  | set this if you want native GNU gcc + ld + objcopy instead of LLVM Clang + Lld                                    |
 | `ARCH`     | the target architecture                                                                                           |
 
 Here's a more advanced **Makefile** example:
@@ -231,7 +231,7 @@ Sets an environment variable by `name` with `data` of length `len`. On success r
 | getchar_ifany | non-blocking, returns 0 if there was no key press, UNICODE otherwise       |
 | putchar       | as usual, stdout only (no stream redirects)                                |
 
-String formating is limited; only supports padding via positive number prefixes, `%d`, `%x`, `%X`, `%c`, `%s`, `%q` and
+String formating is limited; only supports padding via positive number prefixes, `%d`, `%i`, `%x`, `%X`, `%c`, `%s`, `%q` and
 `%p` (no `%e`, `%f`, `%g`, no asterisk and dollar). When `UEFI_NO_UTF8` is defined, then formating operates on wchar_t, so
 it also supports the non-standard `%S` (printing an UTF-8 string) and `%Q` (printing an escaped UTF-8 string). These
 functions don't allocate memory, but in return the total length of the output string cannot be longer than `BUFSIZ`
