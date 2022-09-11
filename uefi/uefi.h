@@ -1,4 +1,3 @@
-#define UEFI_NO_TRACK_ALLOC
 /*
  * uefi.h
  * https://gitlab.com/bztsrc/posix-uefi

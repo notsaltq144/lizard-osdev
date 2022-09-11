@@ -1,3 +1,6 @@
+.A = $(lastword $(MAKEFILE_LIST))
+. = $(shell echo "$(.A)" | rev | cut -c9- | rev)
+
 # detect architecture
 MYARCH = $(shell uname -m | sed s,i[3456789]86,ia32,)
 ifeq ($(ARCH),)
@@ -16,7 +19,7 @@ ifneq ($(OUTDIR),)
 # OUTDIR is not used with uefi/*.o deliberately
 OUTDIR:=$(addsuffix /,$(OUTDIR))
 endif
-CFLAGS += -fshort-wchar -fno-strict-aliasing -ffreestanding -fno-stack-protector -fno-stack-check -I. -I./uefi \
+CFLAGS += -fshort-wchar -fno-strict-aliasing -ffreestanding -fno-stack-protector -fno-stack-check -I$. -I$./uefi \
   -I/usr/include -I/usr/include/efi -I/usr/include/efi/protocol -I/usr/include/efi/$(ARCH) -D__$(ARCH)__
 ifeq ($(ARCH),x86_64)
 CFLAGS += -DHAVE_USE_MS_ABI -mno-red-zone
@@ -36,8 +39,8 @@ ifeq ($(ARCH),x86_64)
 CFLAGS += -maccumulate-outgoing-args
 endif
 CFLAGS += -Wno-builtin-declaration-mismatch -fpic -fPIC
-LDFLAGS += -nostdlib -shared -Bsymbolic -Luefi uefi/crt_$(ARCH).o
-LIBS += -o $(addprefix $(OUTDIR),$(TARGET).so) -luefi -T uefi/elf_$(ARCH)_efi.lds
+LDFLAGS += -nostdlib -shared -Bsymbolic -L$. $./crt_$(ARCH).o
+LIBS += -o $(addprefix $(OUTDIR),$(TARGET).so) -luefi -T $./elf_$(ARCH)_efi.lds
 # see if we're cross-compiling
 ifneq ($(ARCH),$(MYARCH))
 CC = $(ARCH)-elf-gcc
@@ -64,21 +67,24 @@ OBJCOPY = true
 endif
 
 # recipies
-ifeq ($(wildcard uefi/Makefile),)
-ALLTARGETS = crt_$(ARCH).o libuefi.a buildlib
+ifeq ($(wildcard $./Makefile),)
+ALLTARGETS = $./crt_$(ARCH).o libuefi.a buildlib
 else
-ALLTARGETS = uefi/crt_$(ARCH).o uefi/libuefi.a $(OBJS) $(TARGET)
+ALLTARGETS = $./crt_$(ARCH).o uefi/libuefi.a $(OBJS) $(TARGET)
 endif
 
-all: $(OUTDIR) $(EXTRA) $(ALLTARGETS) $(ALSO)
-
+all: b list $(OUTDIR) $(EXTRA) $(ALLTARGETS) $(ALSO)
+t:
+	echo t $(OUTDIR) $(EXTRA) $(ALLTARGETS) $(ALSO)
+b:
+	echo $.
 ifneq ($(OUTDIR),)
 $(OUTDIR):
 	@mkdir -p $(OUTDIR)
 endif
 
 uefi/libuefi.a:
-	@make --no-print-directory -C uefi libuefi.a USE_GCC=$(USE_GCC) ARCH=$(ARCH)
+	@make --no-print-directory -C $. libuefi.a USE_GCC=$(USE_GCC) ARCH=$(ARCH)
 
 libuefi.lib: $(LIBOBJS)
 
@@ -97,23 +103,25 @@ ifneq ($(USE_GCC),)
 endif
 
 $(addprefix $(OUTDIR),$(TARGET).so): $(addprefix $(OUTDIR),$(OBJS)) $(EXTRA)
+	echo HI
+	echo $(LDFLAGS) $^ $(LIBS)
 	$(LD) $(LDFLAGS) $^ $(LIBS)
 	@rm $(addprefix $(OUTDIR),*.lib) 2>/dev/null || true
 
 uefi/%.o: uefi/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC)  -g1 -I$(shell echo $(lastword $(MAKEFILE_LIST))) $(CFLAGS) -c $< -o $@
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $(addprefix $(OUTDIR),$@)
+	$(CC) -I. -I$(shell echo $(lastword $(MAKEFILE_LIST))) $(CFLAGS) -c $< -o $(addprefix $(OUTDIR),$@)
 
 %.o: %.S
-	$(CC) $(CFLAGS) -c $< -o $(addprefix $(OUTDIR),$@)
+	$(CC)  -g3 -I$(shell echo "$(lastword $(MAKEFILE_LIST))" | rev | cut -c9- | rev) $(CFLAGS) -c $< -o $(addprefix $(OUTDIR),$@)
 
 buildlib:
 	@mkdir ../build ../build/uefi 2>/dev/null || true
-	@cp crt_$(ARCH).o ../build/uefi/crt0.o
-	@cp elf_$(ARCH)_efi.lds ../build/uefi/link.ld
-	@cp libuefi.a uefi.h ../build/uefi
+	@cp $(OUTDIR)/$./crt_$(ARCH).o ../build/uefi/crt0.o
+	@cp $./elf_$(ARCH)_efi.lds ../build/uefi/link.ld
+	@cp libuefi.a $./uefi.h ../build/uefi
 
 clean:
 	@rm $(addprefix $(OUTDIR),$(TARGET)) *.o *.a *.lib *.elf $(LIBOBJS) 2>/dev/null || true
@@ -127,3 +135,8 @@ ifeq ($(wildcard uefi/Makefile),)
 else
 	@rm uefi/*.o uefi/libuefi.a 2>/dev/null || true
 endif
+
+.PHONY: list
+list:
+	@LC_ALL=C $(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
+
