@@ -104,10 +104,10 @@ $(addprefix $(OUTDIR),$(TARGET).so): $(addprefix $(OUTDIR),$(OBJS)) $(EXTRA)
 	@rm $(addprefix $(OUTDIR),*.lib) 2>/dev/null || true
 
 uefi/%.o: uefi/%.c
-	$(CC) -I$(shell echo $(lastword $(MAKEFILE_LIST))) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 %.o: %.c
-	$(CC) -I. -I$(shell echo $(lastword $(MAKEFILE_LIST))) $(CFLAGS) -c $< -o $(addprefix $(OUTDIR),$@)
+	$(CC) -I. $(CFLAGS) -c $< -o $(addprefix $(OUTDIR),$@)
 
 %.o: %.S
 	$(CC) -I$(shell echo "$(lastword $(MAKEFILE_LIST))" | rev | cut -c9- | rev) $(CFLAGS) -c $< -o $(addprefix $(OUTDIR),$@)
