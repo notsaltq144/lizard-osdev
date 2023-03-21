@@ -46,9 +46,11 @@ call_function_with_gregs:
 	mov r13, [r15+rr13]
 	mov r14, [r15+rr14]
 	mov r15, [r15+rr15]
-
+	
+; call function
 	call [rsp]
 	pop qword [rsp]
+	
 ; restore registers
 	pop r15
 	pop r14
